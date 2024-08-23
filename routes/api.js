@@ -51,4 +51,12 @@ apiRouter.get("/shorturl/:short_url", (req, res) => {
   res.json({ error: "No short url found for given input" });
 });
 
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+
+apiRouter.post("/fileanalyse", upload.single("upfile"), (req, res) => {
+  const { originalname, mimetype, size } = req.file;
+  res.json({ name: originalname, type: mimetype, size });
+});
+
 module.exports = apiRouter;
