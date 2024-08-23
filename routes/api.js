@@ -1,6 +1,7 @@
 const express = require("express");
 
 const apiRouter = express.Router();
+const { fileManager, createShortUrl } = require("../helpers/common");
 
 //task 1
 apiRouter.get("/:date?", (req, res) => {
@@ -25,6 +26,24 @@ apiRouter.get("/whoami", (req, res) => {
   res.json({ ipaddress, language, software });
 });
 
-apiRouter.get("/ti");
+// task 3
+apiRouter.post("/shorturl", (req, res) => {
+    
+  const original_url = req.body.original_url;
+  const short_url = createShortUrl();
+  fileManager("save", { original_url, short_url });
+  res.json({ original_url, short_url });
+});
+
+apiRouter.get("/shorturl/:short_url", (req, res) => {
+  const short_url = req.params.short_url;
+  const data = fileManager("load");
+  const item = data.find((item) => item.short_url == short_url);
+
+  if (item) {
+    res.redirect(item.original_url);
+  }
+  res.json({ error: "No short url found for given input" });
+});
 
 module.exports = apiRouter;
