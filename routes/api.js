@@ -28,9 +28,14 @@ apiRouter.get("/whoami", (req, res) => {
 
 // task 3
 apiRouter.post("/shorturl", (req, res) => {
-    
-  const original_url = req.body.original_url;
+  const original_url = req.body.url;
   const short_url = createShortUrl();
+  // check valid url
+  const urlRegex = new RegExp(/^(ftp|http|https):\/\/[^ "]+$/);
+
+  if (!urlRegex.test(original_url)) {
+    res.json({ error: "invalid url" });
+  }
   fileManager("save", { original_url, short_url });
   res.json({ original_url, short_url });
 });
